@@ -4,10 +4,11 @@ services:
   web:
     build:
       context: .
+      dockerfile: ./Dockerfile
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
-    env_file: .env
+    env_file: ./dj_docker01/.env
     volumes:
-      - .:/usr/src/app
+      - ./dj_docker01:/usr/src/app

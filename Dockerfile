@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Install dependencies
 RUN pip install --upgrade pip pipenv flake8
 #RUN pip install pip pipenv flake8
-COPY . .
+COPY ./dj_docker01 .
 # run this command to install all dependencies  
 RUN pip install -r requirements.txt  
 #COPY Pipfile* ./
