@@ -38,7 +38,7 @@ pipeline {
                 ''';
 
                 sh '''
-                if [ "$( ! docker ps -q -f name=$container_1)" ]; then
+                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
                 echo "Container n'existe PAS !!!"
 				docker-compose up --build -d
                 fi
@@ -60,7 +60,7 @@ pipeline {
 			 ''';
 
 			 sh '''
-			   if [ "$( ! docker ps -q -f name=$container_1)" ]; then
+			   if [ -z "$(docker ps -q -f name=$container_1)" ]; then
 			     echo "Container does not exist !!!";
 			   fi
 			 ''';
