@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    //agent any
+    agent { label('ubuntu-dev-agent') }
+
+    environment {
+      container_1 = "my-pipeline-1_web_1"
+    }
 
     stages {
 
@@ -25,8 +30,9 @@ pipeline {
                 sh '''
                 if [ "$(docker ps -q -f name=$container_1)" ]; then
                 echo "Container existe !!!"
-                docker container stop $container_1 && \
-                docker container rm $container_1
+				docker-compose down --rmi all 
+                #docker container stop $container_1 && \
+                #docker container rm $container_1
                 echo "Container deleted !!!"
                 fi
                 ''';
@@ -41,6 +47,27 @@ pipeline {
 
             }
         }
+
+		stage('Run Tests'){
+
+		   steps{
+		     //Run django tests
+			 sh '''
+			   if [ "$(docker ps -q -f name=$container_1)" ]; then
+			     echo "Container exist. So let's run some tests !!!";
+				 docker exec -i $container_1 python manage.py test
+			   fi
+			 ''';
+
+			 sh '''
+			   if [ "$( ! docker ps -q -f name=$container_1)" ]; then
+			     echo "Container does not exist !!!";
+			   fi
+			 ''';
+
+		   }
+
+		}
 
 
     }
