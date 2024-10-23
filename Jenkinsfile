@@ -48,6 +48,20 @@ pipeline {
             }
         }
 
+		stage('Run Migrations'){
+		  steps{
+		    //Apply database migrations
+			sh '''
+			  if [ "$(docker ps -q -f name=$container_1)" ]; then
+			    echo "Container exists. So let's run some Migrations !!!";
+				docker exec -i $container_1 python manage.py migrate
+				else
+				echo "Container does not exist. So there is no Migrations !!!";
+			  fi
+			''';
+		  }
+		}
+
 		stage('Run Tests'){
 
 		   steps{
@@ -56,12 +70,8 @@ pipeline {
 			   if [ "$(docker ps -q -f name=$container_1)" ]; then
 			     echo "Container exist. So let's run some tests !!!";
 				 docker exec -i $container_1 python manage.py test
-			   fi
-			 ''';
-
-			 sh '''
-			   if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-			     echo "Container does not exist !!!";
+				 else
+			     echo "Container does not exist. No test !!!";
 			   fi
 			 ''';
 
