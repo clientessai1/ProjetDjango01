@@ -4,7 +4,8 @@ pipeline {
 
     environment {
       container_1 = "my-pipeline-1_web_1";
-      app_folder = "dj_docker01";
+      app_folder = "dj_docker01/dj_docker01"; //In initial django project, it is the app folder in the same directory as manage.py file.
+      app_folder_in_container = "dj_docker01"; //In initial django project, it is the app folder in the same directory as manage.py file.
     }
 
     stages {
@@ -83,9 +84,8 @@ pipeline {
 		  steps{
 		    //Run pylint on codebase
 			sh '''
-			  app_folder_route="$app_folder/";
-			  docker exec -i $container_1 pylint .
-			  #"$app_folder_path"
+			  app_folder_path="$app_folder_in_container/";
+			  docker exec -i $container_1 pylint "$app_folder_path"
 			''';
 		  }
 		}
