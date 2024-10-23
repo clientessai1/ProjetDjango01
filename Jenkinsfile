@@ -3,7 +3,8 @@ pipeline {
     agent { label('ubuntu-dev-agent') }
 
     environment {
-      container_1 = "my-pipeline-1_web_1"
+      container_1 = "my-pipeline-1_web_1";
+      app_folder = "dj_docker01";
     }
 
     stages {
@@ -74,9 +75,19 @@ pipeline {
 			     echo "Container does not exist. No test !!!";
 			   fi
 			 ''';
-
 		   }
+		}
 
+		stage('Run Code Scan'){
+
+		  steps{
+		    //Run pylint on codebase
+			sh '''
+			  app_folder_route="$app_folder/";
+			  docker exec -i $container_1 pylint .
+			  #"$app_folder_path"
+			''';
+		  }
 		}
 
 

@@ -13,7 +13,7 @@ RUN pip install --upgrade pip pipenv flake8
 #RUN pip install pip pipenv flake8
 COPY ./dj_docker01 .
 # run this command to install all dependencies  
-RUN pip install -r requirements.txt  
+RUN pip install -r requirements.txt  pylint
 #COPY Pipfile* ./
 #COPY Pipfile Pipfile.lock ./
 #RUN pipenv install --system --ignore-pipfile
