@@ -86,7 +86,7 @@ pipeline {
 		    //Run pylint on codebase
 			sh '''
 			  app_folder_path="$app_folder_in_container/";
-			  docker exec -i $container_1 pylint --fail-under=$fail_under_value "$app_folder_path"
+			  docker exec -i $container_1 pylint --fail-under=$fail_under_value --output-format=text "$app_folder_path" > reports/ci-reports/pylint_results.txt
 			''';
 		  }
 		}
