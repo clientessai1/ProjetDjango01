@@ -7,6 +7,7 @@ pipeline {
       app_folder = "dj_docker01/dj_docker01"; //In initial django project, it is the app folder in the same directory as manage.py file. And both are in the project directory.
       app_folder_in_container = "dj_docker01"; //In container context, as we define the project_folder as the defaut entrance point, so we fall directly in the same directory as the app_folder;
 	  fail_under_value = 7; //Under this value the code scan is allowed to fail;
+	  ci_reports_dir = "reports/ci-reports";
     }
 
     stages {
@@ -86,7 +87,8 @@ pipeline {
 		    //Run pylint on codebase
 			sh '''
 			  app_folder_path="$app_folder_in_container/";
-			  docker exec -i $container_1 pylint --fail-under=$fail_under_value --output-format=text "$app_folder_path" > reports/ci-reports/pylint_results.txt
+			  mkdir -p "$ci_reports_dir"
+			  docker exec -i $container_1 pylint --fail-under=$fail_under_value --output-format=text "$app_folder_path" > "$ci_reports_dir/pylint_results.txt"
 			''';
 		  }
 		}
