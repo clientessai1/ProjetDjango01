@@ -8,6 +8,7 @@ pipeline {
       app_folder_in_container = "dj_docker01"; //In container context, as we define the project_folder as the defaut entrance point, so we fall directly in the same directory as the app_folder;
 	  fail_under_value = 7; //Under this value the code scan is allowed to fail;
 	  ci_reports_dir = "reports/ci-reports";
+	  docker_forci_dir = "docker-for-ci";
     }
 
     stages {
@@ -40,13 +41,15 @@ pipeline {
                 echo "Container deleted !!!"
                 fi
                 ''';
-//
-//                sh '''
-//                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-//                echo "Container n'existe PAS !!!"
-//				docker-compose up --build -d
-//                fi
-//                ''';
+
+                sh '''
+                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+                echo "Container n'existe PAS !!!"
+				cd "$docker_forci_dir" && docker-compose up --build -d && pwd
+                fi
+                ''';
+
+				sh 'pwd';
 
 
             }
