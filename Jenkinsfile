@@ -31,15 +31,15 @@ pipeline {
 //				fi
 //				""";
 
-//                sh '''
-//                if [ "$(docker ps -q -f name=$container_1)" ]; then
-//                echo "Container existe !!!"
-//				docker-compose down --rmi all 
-//                #docker container stop $container_1 && \
-//                #docker container rm $container_1
-//                echo "Container deleted !!!"
-//                fi
-//                ''';
+                sh '''
+                if [ "$(docker ps -q -f name=$container_1)" ]; then
+                echo "Container existe !!!"
+				docker-compose down --rmi all 
+                #docker container stop $container_1 && \
+                #docker container rm $container_1
+                echo "Container deleted !!!"
+                fi
+                ''';
 //
 //                sh '''
 //                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
@@ -81,17 +81,17 @@ pipeline {
 //		   }
 //		}
 //
-		stage('Run Code Scan'){
-
-		  steps{
-		    //Run pylint on codebase
-			sh '''
-			  app_folder_path="$app_folder_in_container/";
-			  mkdir -p "$ci_reports_dir"
-			  docker exec -i $container_1 pylint --fail-under=$fail_under_value --output-format=text "$app_folder_path" > "$ci_reports_dir/pylint_results.txt"
-			''';
-		  }
-		}
+//		stage('Run Code Scan'){
+//
+//		  steps{
+//		    //Run pylint on codebase
+//			sh '''
+//			  app_folder_path="$app_folder_in_container/";
+//			  mkdir -p "$ci_reports_dir"
+//			  docker exec -i $container_1 pylint --fail-under=$fail_under_value --output-format=text "$app_folder_path" > "$ci_reports_dir/pylint_results.txt"
+//			''';
+//		  }
+//		}
 
 
     }
