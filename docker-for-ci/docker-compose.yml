@@ -3,8 +3,8 @@ version: '3.7'
 services:
   web:
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: ./docker-for-ci/Dockerfile
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     ports:
