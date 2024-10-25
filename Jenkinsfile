@@ -35,7 +35,7 @@ pipeline {
                 sh '''
                 if [ "$(docker ps -q -f name=$container_1)" ]; then
                 echo "Container existe !!!"
-				docker-compose down --rmi all 
+				cd "$docker_forci_dir" && docker-compose down --rmi all 
                 #docker container stop $container_1 && \
                 #docker container rm $container_1
                 echo "Container deleted !!!"
