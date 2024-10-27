@@ -106,7 +106,7 @@ pipeline {
 				rm -rf docker-for-hub #delete and remake to copy
 				echo "The $docker_forhub_dir folder is removed."
 			  fi
-			  cp -rp "$docker-forci_dir" "$docker_forhub_dir" 
+			  cp -rp "$docker_forci_dir" "$docker_forhub_dir" 
 			  ls .
 			''';
 		  }
