@@ -107,6 +107,8 @@ pipeline {
 				echo "The $docker_forhub_dir folder is removed."
 			  fi
 			  cp -rp "$docker_forci_dir" "$docker_forhub_dir" 
+			  sed -i 's/pylint//g' "$docker_forhub_dir/Dockerfile"
+			  sed -i "s/$docker_forci_dir/$docker_forhub_dir/g" "$docker_forhub_dir/docker-compose.yml"
 			  ls .
 			''';
 		  }
