@@ -101,7 +101,7 @@ pipeline {
 		  steps{
 		    //Create container to hub files from docker-for-ci directory
 		    sh'''
-			  if [ -d "$docker_forhub_dir" ] then
+			  if [ -d "$docker_forhub_dir" ]; then
 				echo "The $docker_forhub_dir folder exists."
 				rm -rf docker-for-hub #delete and remake to copy
 				echo "The $docker_forhub_dir folder is removed."
