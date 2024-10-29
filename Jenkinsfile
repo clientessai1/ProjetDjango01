@@ -10,6 +10,7 @@ pipeline {
 	  ci_reports_dir = "reports/ci-reports";
 	  docker_forci_dir = "docker-for-ci";
 	  docker_forhub_dir = "docker-for-hub";
+      container_2 = "docker-for-hub_web_1";
     }
 
     stages {
@@ -110,6 +111,31 @@ pipeline {
 			  sed -i 's/pylint//g' "$docker_forhub_dir/Dockerfile"
 			  sed -i "s/$docker_forci_dir/$docker_forhub_dir/g" "$docker_forhub_dir/docker-compose.yml"
 			  ls .
+			''';
+		  }
+		}
+
+		stage('Destroy testing container and Create docker hub container'){
+		  steps{
+		    //Check if docker-hub directory exists
+			sh'''
+			  if [ -d "$docker_forhub_dir" ]; then
+
+			    if [ "$(docker ps -q -f name=$container_1)" ]; then
+				  echo "Container $container_1 existe !!!"
+				  cd "$docker_forci_dir" && docker-compose down --rmi all 
+				fi
+
+			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+				  echo "Container $container_1 n'existe plus !!!"
+				  cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd
+				fi
+
+			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
+				fi
+
+			  fi
 			''';
 		  }
 		}
