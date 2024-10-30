@@ -11,7 +11,7 @@ pipeline {
 	  docker_forci_dir = "docker-for-ci";
 	  docker_forhub_dir = "docker-for-hub";
       container_2 = "docker-for-hub_web_1";
-	  web_app_link = "http://localhost:8080";
+	  web_app_link = "http://localhost:8000";
     }
 
     stages {
