@@ -11,6 +11,7 @@ pipeline {
 	  docker_forci_dir = "docker-for-ci";
 	  docker_forhub_dir = "docker-for-hub";
       container_2 = "docker-for-hub_web_1";
+	  web_app_link = "http://localhost:8080";
     }
 
     stages {
@@ -98,45 +99,69 @@ pipeline {
 //		  }
 //		}
 
-		stage('Create Docker to hub files'){
+//		stage('Create Docker to hub files'){
+//		  steps{
+//		    //Create container to hub files from docker-for-ci directory
+//		    sh'''
+//			  if [ -d "$docker_forhub_dir" ]; then
+//				echo "The $docker_forhub_dir folder exists."
+//				rm -rf "$docker_forhub_dir" #delete and remake to copy
+//				echo "The $docker_forhub_dir folder is removed."
+//			  fi
+//			  cp -rp "$docker_forci_dir" "$docker_forhub_dir" 
+//			  sed -i 's/pylint//g' "$docker_forhub_dir/Dockerfile"
+//			  sed -i "s/$docker_forci_dir/$docker_forhub_dir/g" "$docker_forhub_dir/docker-compose.yml"
+//			  ls .
+//			''';
+//		  }
+//		}
+//
+//		stage('Destroy testing container and Create docker hub container'){
+//		  steps{
+//		    //Check if docker-hub directory exists
+//			sh'''
+//			  if [ -d "$docker_forhub_dir" ]; then
+//
+//			    if [ "$(docker ps -q -f name=$container_1)" ]; then
+//				  echo "Container $container_1 existe !!!"
+//				  cd "$docker_forci_dir" && docker-compose down --rmi all 
+//				fi
+//
+//			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+//				  echo "Container $container_1 n'existe plus !!!"
+//				  cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd
+//				fi
+//
+//			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+//				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
+//				fi
+//
+//			  fi
+//			''';
+//		  }
+//		}
+//
+		stage('Check web app status'){
 		  steps{
-		    //Create container to hub files from docker-for-ci directory
-		    sh'''
-			  if [ -d "$docker_forhub_dir" ]; then
-				echo "The $docker_forhub_dir folder exists."
-				rm -rf "$docker_forhub_dir" #delete and remake to copy
-				echo "The $docker_forhub_dir folder is removed."
-			  fi
-			  cp -rp "$docker_forci_dir" "$docker_forhub_dir" 
-			  sed -i 's/pylint//g' "$docker_forhub_dir/Dockerfile"
-			  sed -i "s/$docker_forci_dir/$docker_forhub_dir/g" "$docker_forhub_dir/docker-compose.yml"
-			  ls .
-			''';
-		  }
-		}
+		    //Check if the container for docker-hub exists
+			script{
+			  def status = sh(script: "docker ps -q -f name=${container_2}", returnStdout: true).trim();
+			  if(status){
+			    echo "Container '${container_2}' is running."
+				sh '''
+				  response=$(curl -o /dev/null -s -w '%{http_code}' "$web_app_link")
+				  if [ "$response" -eq 200 ]; then
+				    echo 'Web App is Up !'
+				  else
+				    echo "Web App is down ! HTTP response code: $response"
+					exit 1
+				  fi
+				''';
+			  }else{
+			    error "Container '${container_2}' is not running."
+			  }
+			}
 
-		stage('Destroy testing container and Create docker hub container'){
-		  steps{
-		    //Check if docker-hub directory exists
-			sh'''
-			  if [ -d "$docker_forhub_dir" ]; then
-
-			    if [ "$(docker ps -q -f name=$container_1)" ]; then
-				  echo "Container $container_1 existe !!!"
-				  cd "$docker_forci_dir" && docker-compose down --rmi all 
-				fi
-
-			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-				  echo "Container $container_1 n'existe plus !!!"
-				  cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd
-				fi
-
-			    if [ "$(docker ps -q -f name=$container_2)" ]; then
-				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
-				fi
-
-			  fi
-			''';
 		  }
 		}
 
