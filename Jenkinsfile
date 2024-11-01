@@ -116,54 +116,55 @@ pipeline {
 //		  }
 //		}
 //
-//		stage('Destroy testing container and Create docker hub container'){
-//		  steps{
-//		    //Check if docker-hub directory exists
-//			sh'''
-//			  if [ -d "$docker_forhub_dir" ]; then
-//
-//			    if [ "$(docker ps -q -f name=$container_1)" ]; then
-//				  echo "Container $container_1 existe !!!"
-//				  cd "$docker_forci_dir" && docker-compose down --rmi all 
-//				fi
-//
-//			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-//				  echo "Container $container_1 n'existe plus !!!"
-//				  cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd
-//				fi
-//
-//			    if [ "$(docker ps -q -f name=$container_2)" ]; then
-//				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
-//				fi
-//
-//			  fi
-//			''';
-//		  }
-//		}
-//
-		stage('Check web app status'){
+		stage('Destroy testing container and Create docker hub container'){
 		  steps{
-		    //Check if the container for docker-hub exists
-			script{
-			  def status = sh(script: "docker ps -q -f name=${container_2}", returnStdout: true).trim();
-			  if(status){
-			    echo "Container '${container_2}' is running."
-				sh '''
-				  response=$(curl -o /dev/null -s -w '%{http_code}' "$web_app_link")
-				  if [ "$response" -eq 200 ]; then
-				    echo 'Web App is Up !'
-				  else
-				    echo "Web App is down ! HTTP response code: $response"
-					exit 1
-				  fi
-				''';
-			  }else{
-			    error "Container '${container_2}' is not running."
-			  }
-			}
+		    Check if docker-hub directory exists
+			sh'''
+			  if [ -d "$docker_forhub_dir" ]; then
 
+			    if [ "$(docker ps -q -f name=$container_1)" ]; then
+				  echo "Container $container_1 existe !!!"
+				  cd "$docker_forci_dir" && docker-compose down --rmi all 
+				fi
+
+			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+				  echo "Container $container_1 n'existe plus !!!"
+				  //cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd // To keep
+				  cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd // to be removed later. Just for testing purpose
+				fi
+
+			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
+				fi
+
+			  fi
+			''';
 		  }
 		}
+
+//		stage('Check web app status'){
+//		  steps{
+//		    //Check if the container for docker-hub exists
+//			script{
+//			  def status = sh(script: "docker ps -q -f name=${container_2}", returnStdout: true).trim();
+//			  if(status){
+//			    echo "Container '${container_2}' is running."
+//				sh '''
+//				  response=$(curl -o /dev/null -s -w '%{http_code}' "$web_app_link")
+//				  if [ "$response" -eq 200 ]; then
+//				    echo 'Web App is Up !'
+//				  else
+//				    echo "Web App is down ! HTTP response code: $response"
+//					exit 1
+//				  fi
+//				''';
+//			  }else{
+//			    error "Container '${container_2}' is not running."
+//			  }
+//			}
+//
+//		  }
+//		}
 
 
     }
