@@ -12,6 +12,7 @@ pipeline {
 	  docker_forhub_dir = "docker-for-hub";
       container_2 = "docker-for-hub_web_1";
 	  web_app_link = "http://localhost:8000";
+	  docker_image = "aristidesama2/django_app01";
     }
 
     stages {
@@ -35,22 +36,22 @@ pipeline {
 //				fi
 //				""";
 
-//                sh '''
-//                if [ "$(docker ps -q -f name=$container_1)" ]; then
-//                echo "Container existe !!!"
-//				cd "$docker_forci_dir" && docker-compose down --rmi all 
-//                #docker container stop $container_1 && \
-//                #docker container rm $container_1
-//                echo "Container deleted !!!"
-//                fi
-//                ''';
-//
-//                sh '''
-//                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-//                echo "Container n'existe PAS !!!"
-//				cd "$docker_forci_dir" && docker-compose up --build -d && pwd
-//                fi
-//                ''';
+                sh '''
+                if [ "$(docker ps -q -f name=$container_1)" ]; then
+                echo "Container existe !!!"
+				cd "$docker_forci_dir" && docker-compose down --rmi all 
+                #docker container stop $container_1 && \
+                #docker container rm $container_1
+                echo "Container deleted !!!"
+                fi
+                ''';
+
+                sh '''
+                if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+                echo "Container n'existe PAS !!!"
+				cd "$docker_forci_dir" && docker-compose up --build -d && pwd
+                fi
+                ''';
 
 				sh 'pwd';
 
@@ -115,32 +116,32 @@ pipeline {
 //			''';
 //		  }
 //		}
+
+//		stage('Destroy testing container and Create docker hub container'){
+//		  steps{
+//		    //Check if docker-hub directory exists
+//			sh'''
+//			  if [ -d "$docker_forhub_dir" ]; then
 //
-		stage('Destroy testing container and Create docker hub container'){
-		  steps{
-		    //Check if docker-hub directory exists
-			sh'''
-			  if [ -d "$docker_forhub_dir" ]; then
-
-			    if [ "$(docker ps -q -f name=$container_1)" ]; then
-				  echo "Container $container_1 existe !!!"
-				  cd "$docker_forci_dir" && docker-compose down --rmi all 
-				fi
-
-			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
-				  echo "Container $container_1 n'existe plus !!!"
-				  #cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd // To keep
-				  cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd // to be removed later. Just for testing purpose
-				fi
-
-			    if [ "$(docker ps -q -f name=$container_2)" ]; then
-				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
-				fi
-
-			  fi
-			''';
-		  }
-		}
+//			    if [ "$(docker ps -q -f name=$container_1)" ]; then
+//				  echo "Container $container_1 existe !!!"
+//				  cd "$docker_forci_dir" && docker-compose down --rmi all 
+//				fi
+//
+//			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
+//				  echo "Container $container_1 n'existe plus !!!"
+//				  #cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd // To keep
+//				  cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd // to be removed later. Just for testing purpose
+//				fi
+//
+//			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+//				  echo "Container $container_2 existe !!!. The next step is sending it to Docker-Hub"
+//				fi
+//
+//			  fi
+//			''';
+//		  }
+//		}
 
 //		stage('Check web app status'){
 //		  steps{
@@ -165,6 +166,17 @@ pipeline {
 //
 //		  }
 //		}
+
+
+//        stage("Push image to Docker Hub"){
+//            steps{
+//                withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDS_KAASSIGBI', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+//                    sh """
+//                    docker login  --username $USERNAME --password $PASSWORD && docker push $docker_image:latest
+//                    """
+//                }
+//            }
+//        }
 
 
     }

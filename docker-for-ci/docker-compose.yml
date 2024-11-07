@@ -5,6 +5,7 @@ services:
     build:
       context: ..
       dockerfile: ./docker-for-ci/Dockerfile
+    image: aristidesama2/django_app01:latest
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     ports:
