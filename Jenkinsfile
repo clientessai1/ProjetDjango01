@@ -170,7 +170,7 @@ pipeline {
 
         stage("Push image to Docker Hub"){
             steps{
-                withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDS_KAASSIGBI', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDS_ARIS', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
                     sh """
                     docker login  --username $USERNAME --password $PASSWORD && docker push $docker_image:latest
                     """
