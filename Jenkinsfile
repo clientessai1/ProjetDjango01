@@ -126,7 +126,7 @@ pipeline {
 			    if [ -z "$(docker ps -q -f name=$container_1)" ]; then
 				  echo "Container $container_1 n'existe plus !!!"
 				  cd .. && cd "$docker_forhub_dir" && docker-compose up --build -d && pwd // To keep
-				  cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd // to be removed later. Just for testing purpose
+				  #cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd // to be removed later. Just for testing purpose
 				fi
 
 			    if [ "$(docker ps -q -f name=$container_2)" ]; then
