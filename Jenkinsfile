@@ -42,6 +42,14 @@ pipeline {
                 ''';
 
                 sh '''
+
+			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+				  echo "Container $container_2 existe !!!"
+				  docker stop $container_2 && docker rm $container_2
+				  echo "Container $container_2 supprimé pour éviter d'éventuels conflits de ports !!!"
+				fi
+
+
                 if [ -z "$(docker ps -q -f name=$container_1)" ]; then
                 echo "Container n'existe PAS !!!"
 				cd "$docker_forci_dir" && docker-compose up --build -d && pwd
@@ -172,6 +180,27 @@ pipeline {
                 }
             }
         }
+
+		stage('Destroy docker hub container and images in order to free used ressources on the system'){
+		  steps{
+		    //Check if docker-hub directory exists
+			sh'''
+			  if [ -d "$docker_forhub_dir" ]; then
+
+			    if [ "$(docker ps -q -f name=$container_2)" ]; then
+				  echo "Container $container_2 existe !!!"
+				  cd "$docker_forhub_dir" && docker-compose down --rmi all && pwd 
+				fi
+
+			    if [ -z "$(docker ps -q -f name=$container_2)" ]; then
+				  echo "Container $container_2 has been cleaned and disk spaced free !!!. The next step is the continuous Delivery."
+				fi
+
+			  fi
+			''';
+		  }
+		}
+
 
 
     }
