@@ -45,7 +45,7 @@ pipeline {
 
 			    if [ "$(docker ps -q -f name=$container_2)" ]; then
 				  echo "Container $container_2 existe !!!"
-				  docker stop $container_2 && docker rm $container_2
+				  docker container stop $container_2 && docker container rm $container_2
 				  echo "Container $container_2 supprimé pour éviter d'éventuels conflits de ports !!!"
 				fi
 
